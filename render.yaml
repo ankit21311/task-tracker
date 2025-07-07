@@ -2,12 +2,19 @@ services:
   - type: web
     name: personal-task-tracker
     env: static
-    buildCommand: npm install && npm run build
+    buildCommand: |
+      npm install --no-optional &&
+      chmod +x node_modules/.bin/* 2>/dev/null || true &&
+      npm run build || npx react-scripts build
     staticPublishPath: ./build
     envVars:
       - key: CI
         value: false
       - key: GENERATE_SOURCEMAP
+        value: false
+      - key: NODE_VERSION
+        value: 20
+      - key: NPM_CONFIG_AUDIT
         value: false
     headers:
       - path: /*

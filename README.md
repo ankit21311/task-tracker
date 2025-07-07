@@ -133,6 +133,14 @@ npm run build
 
 Builds the app for production to the `build` folder
 
+### Alternative Build (if permissions issue)
+
+```bash
+npm run build:safe
+```
+
+Uses npx to avoid potential permission issues
+
 ### Testing
 
 ```bash
@@ -150,6 +158,7 @@ This application is configured for deployment on various platforms:
 - Uses `render.yaml` configuration file
 - Automatically builds and deploys from GitHub
 - Environment variables are properly configured
+- Includes fallback build commands for permission issues
 
 ### Netlify
 
@@ -164,19 +173,47 @@ This application is configured for deployment on various platforms:
 
 ## 🔧 Deployment Troubleshooting
 
-If you encounter build issues during deployment:
+### Common "Permission Denied" Error Fix
 
-1. **Permission Denied Error**:
-    - Ensure `render.yaml` uses `npm install` instead of `npm ci`
-    - Check that environment variables are properly set
+If you encounter the `react-scripts: Permission denied` error on Render:
 
-2. **Build Warnings Treated as Errors**:
-    - The `.env` file sets `CI=false` to prevent this
-    - Alternatively, set `CI=false` in your deployment platform's environment variables
+1. **Updated Build Configuration**:
+   - The `render.yaml` now includes permission fixes and fallback commands
+   - Uses `chmod +x node_modules/.bin/* 2>/dev/null || true` to set permissions
+   - Falls back to `npx react-scripts build` if the standard build fails
+
+2. **Environment Variables**:
+   ```yaml
+   envVars:
+     - key: CI
+       value: false
+     - key: GENERATE_SOURCEMAP
+       value: false
+     - key: NODE_VERSION
+       value: 20
+   ```
+
+3. **Multi-Step Build Command**:
+   ```bash
+   npm install --no-optional &&
+   chmod +x node_modules/.bin/* 2>/dev/null || true &&
+   npm run build || npx react-scripts build
+   ```
+
+### Other Common Issues:
+
+1. **Build Warnings Treated as Errors**:
+   - The `.env` file sets `CI=false` to prevent this
+   - Environment variables in `render.yaml` override this setting
+
+2. **Node.js Version Issues**:
+   - Updated to Node.js 20 (current LTS)
+   - `.nvmrc` file specifies the version
+   - `NODE_VERSION` environment variable ensures consistency
 
 3. **Static File Serving**:
-    - Make sure `homepage: "."` is set in `package.json`
-    - Ensure proper routing configuration for single-page applications
+   - Make sure `homepage: "."` is set in `package.json`
+   - Proper routing configuration for SPA in `render.yaml`
 
 ## 💡 Usage Instructions
 
