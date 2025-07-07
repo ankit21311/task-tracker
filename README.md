@@ -141,6 +141,43 @@ npm test
 
 Launches the test runner in interactive watch mode
 
+## 🌐 Deployment
+
+This application is configured for deployment on various platforms:
+
+### Render.com
+
+- Uses `render.yaml` configuration file
+- Automatically builds and deploys from GitHub
+- Environment variables are properly configured
+
+### Netlify
+
+- Can be deployed by connecting your GitHub repository
+- Build command: `npm run build`
+- Publish directory: `build`
+
+### Vercel
+
+- Can be deployed using Vercel CLI or GitHub integration
+- Zero configuration deployment for React apps
+
+## 🔧 Deployment Troubleshooting
+
+If you encounter build issues during deployment:
+
+1. **Permission Denied Error**:
+    - Ensure `render.yaml` uses `npm install` instead of `npm ci`
+    - Check that environment variables are properly set
+
+2. **Build Warnings Treated as Errors**:
+    - The `.env` file sets `CI=false` to prevent this
+    - Alternatively, set `CI=false` in your deployment platform's environment variables
+
+3. **Static File Serving**:
+    - Make sure `homepage: "."` is set in `package.json`
+    - Ensure proper routing configuration for single-page applications
+
 ## 💡 Usage Instructions
 
 1. **Login**: Enter your name on the welcome screen
